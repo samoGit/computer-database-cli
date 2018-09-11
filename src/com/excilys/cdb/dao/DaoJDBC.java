@@ -25,6 +25,8 @@ public class DaoJDBC {
 
 	/**
 	 * Create the instance of DaoJDBC (if not already created) then return it.
+	 * 
+	 * @return DaoJDBC
 	 */
 	static public DaoJDBC GetInstance() {
 		if (instanceDaoJDBC == null) {
@@ -60,6 +62,8 @@ public class DaoJDBC {
 	
 	/**
 	 * Return the list of companies present in the BDD
+	 * 
+	 * @return List of Company
 	 */	
 	public List<Company> getListCompanies() {
 		ArrayList<Company> listCompanies = new ArrayList<>();
@@ -90,6 +94,8 @@ public class DaoJDBC {
 
 	/**
 	 * Return the list of computer present in the BDD
+	 * 
+	 * @return List of Computer
 	 */	
 	public List<Computer> getListComputers() {
 		ArrayList<Computer> listComputers = new ArrayList<>();

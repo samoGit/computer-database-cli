@@ -82,6 +82,8 @@ public class CommandLineInterface {
 
 	/**
      * Entry point of the application.
+     * 
+     * @param args String[] not used
      */
 	public static void main(String[] args) {
     	System.out.println("\nHELLO");
