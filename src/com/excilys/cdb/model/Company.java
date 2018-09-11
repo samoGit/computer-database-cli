@@ -1,5 +1,10 @@
 package com.excilys.cdb.model;
 
+/**
+ * Contain data about a given company.
+ * 
+ * @author samy
+ */
 public class Company {
 	// Attributes : 
 	private Long id;

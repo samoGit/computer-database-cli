@@ -2,8 +2,14 @@ package com.excilys.cdb.model;
 
 import java.sql.Date;
 
+/**
+ * Contain data about a given computer.
+ * 
+ * @author samy
+ */
 public class Computer {
 	// Attributes : 
+	private Long id;
 	private String name;
 	private Date introduced;
 	private Date discontinued;
@@ -12,14 +18,21 @@ public class Computer {
 	// Constructors : 
 	public Computer() {
 	}
-	public Computer(String name, Date introduced, Date discontinued, Long company_id) {
+	public Computer(Long id, String name, Date introduced, Date discontinued, Long company_id) {
+		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
 		this.company_id = company_id;
 	}
 	
-	// Getters / Setters : 
+	// Getters and Setters : 	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public String getName() {
 		return name;
 	}
