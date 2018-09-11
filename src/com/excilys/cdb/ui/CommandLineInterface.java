@@ -3,9 +3,10 @@ package com.excilys.cdb.ui;
 import java.util.List;
 import java.util.Scanner;
 
-import com.excilys.cdb.dao.DaoJDBC;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.service.CompanyService;
+import com.excilys.cdb.service.ComputerService;
 
 /**
  * Display information in the terminal and manages interactions with the user.
@@ -13,17 +14,21 @@ import com.excilys.cdb.model.Computer;
  * @author samy
  */
 public class CommandLineInterface {
-    /**
-     * Manage interaction with the BDD.
+
+	private CompanyService companyService;
+	private ComputerService computerService;
+
+	/**
+     * Manage interaction with the user.
      */
-	private DaoJDBC daoJDBC;
 	private Scanner scanner;
 
     /**
      * Constructor, init daoJDBC .
      */
 	public CommandLineInterface() {
-    	daoJDBC = DaoJDBC.GetInstance();
+		companyService = new CompanyService();
+		computerService = new ComputerService();
     	scanner = new Scanner(System.in);
 	}
 
@@ -31,7 +36,7 @@ public class CommandLineInterface {
      * Display info about all companies.
      */
 	public void displayAllCompanies() {
-    	List<Company> listCompanies = daoJDBC.getListCompanies();
+    	List<Company> listCompanies = companyService.getListCompanies();
 
     	System.out.println("\nList of companies : ");
     	for (Company c : listCompanies) {
@@ -43,7 +48,7 @@ public class CommandLineInterface {
      * Display info about all computers.
      */
 	public void displayAllComputers() {
-    	List<Computer> listComputers = daoJDBC.getListComputers();
+    	List<Computer> listComputers = computerService.getListComputers();
 
     	System.out.println("\nList of computers : ");
     	for (Computer c : listComputers) {
@@ -61,10 +66,10 @@ public class CommandLineInterface {
 		
 		boolean stop = false;
 		while (!stop) {
-			System.out.println("\n\n\tWhat do you want to do ?");
-			System.out.println("1) Display the list of Companies");
-			System.out.println("2) Display the list of Computers");
-			System.out.println("3) Quit");
+			System.out.println("\n\nWhat do you want to do ?");
+			System.out.println("\t1) Display the list of Companies");
+			System.out.println("\t2) Display the list of Computers");
+			System.out.println("\t3) Quit");
 			System.out.print("Please enter a number between 1 and 3 : ");
 
 			String strChoice = scanner.nextLine();
