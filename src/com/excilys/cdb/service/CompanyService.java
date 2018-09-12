@@ -25,5 +25,5 @@ public class CompanyService {
 	 */	
 	public List<Company> getListCompanies() {
 		return daoJDBC.getListCompanies();
-	}
+	}	
 }

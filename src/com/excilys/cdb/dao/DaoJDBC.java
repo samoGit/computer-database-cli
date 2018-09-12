@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,19 +64,13 @@ public class DaoJDBC {
 	/**
 	 * Return the list of companies present in the BDD
 	 * 
-	 * @return List of Company
+	 * @return List of {@link Company}
 	 */	
 	public List<Company> getListCompanies() {
 		ArrayList<Company> listCompanies = new ArrayList<>();
 		
     	try {
-
-	    	System.out.println("\nFill the list of companies : ");
-	    	String query = "SELECT * FROM company;";
-	    	ResultSet results;
-	    	Statement stmt = connection.createStatement();
-	    	results = stmt.executeQuery(query);
-
+	    	ResultSet results = this.executeQuery("SELECT id, Name FROM company;");
 	    	while (results.next()) {
 	    		Long id = results.getLong("id");
 	    		String name = results.getString("Name");
@@ -83,8 +78,6 @@ public class DaoJDBC {
 	    		Company c = new Company(id, name);
 	    		listCompanies.add(c);
 	    	}
-	    	System.out.println("Success !");	
-    	
     	} catch (SQLException e) {
  			e.printStackTrace();
  		}
@@ -95,19 +88,13 @@ public class DaoJDBC {
 	/**
 	 * Return the list of computer present in the BDD
 	 * 
-	 * @return List of Computer
+	 * @return List of {@link Computer}
 	 */	
 	public List<Computer> getListComputers() {
 		ArrayList<Computer> listComputers = new ArrayList<>();
-		
+
     	try {
-
-	    	System.out.println("\nFill the list of Computers : ");
-	    	String query = "SELECT * FROM computer;";
-	    	ResultSet results;
-	    	Statement stmt = connection.createStatement();
-	    	results = stmt.executeQuery(query);
-
+	    	ResultSet results = this.executeQuery("SELECT id, Name, introduced, discontinued, company_id FROM computer;");
 	    	while (results.next()) {
 	    		Long id = results.getLong("id");
 	    		String name = results.getString("Name");
@@ -118,18 +105,124 @@ public class DaoJDBC {
 	    		Computer c = new Computer(id, name, introduced, discontinued, company_id);
 	    		listComputers.add(c);
 	    	}
-	    	System.out.println("Success !");	
-    	
     	} catch (SQLException e) {
  			e.printStackTrace();
  		}
-    	
+
     	return listComputers;
 	}
 	
 	/**
+	 * Find every computers in the BDD with a given name
+	 * 
+	 * @param name String 
+	 * 
+	 * @return a list of {@link Computer}
+	 */	
+	public List<Computer> getListComputersByName(String name) {
+		ArrayList<Computer> listComputersFound = new ArrayList<>();
+
+    	try {
+	    	ResultSet results = this.executeQuery("SELECT id, introduced, discontinued, company_id FROM computer where name=\"" + name + "\";");
+	    	while (results.next()) {// TODO : check only one result !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	    		Long id = results.getLong("id");
+	    		Date introduced = results.getDate("introduced");;
+	    		Date discontinued = results.getDate("discontinued");
+	    		Long company_id = results.getLong("company_id");
+	    		
+	    		listComputersFound.add( new Computer(id, name, introduced, discontinued, company_id) );
+	    	}
+    	} catch (SQLException e) {
+ 			e.printStackTrace();
+ 		}
+
+    	return listComputersFound;
+	}
+
+	/**
+	 * Execute a SQL query to read data from BDD
+	 * 
+	 * @param query String a valid SQL query.
+	 * 
+	 * @return The resultSet of the query executed
+	 * @throws SQLException if a database access error occurs
+	 */	
+	public ResultSet executeQuery(String query) throws SQLException {
+		Statement stmt;
+    	System.out.println("\nExecute the following query : " + query);
+		stmt = connection.createStatement();
+		ResultSet result =  stmt.executeQuery(query);
+    	System.out.println("Success !\n");
+
+    	return result;
+	}
+
+	/**
+	 * Execute a SQL query to update the BDD.
+	 * 
+	 * @param query String a valid SQL query.
+	 * 
+	 * @return either (1) the row count for SQL Data Manipulation Language (DML) statements or (2) 0 for SQL statements that return nothing
+	 * @throws SQLException if a database access error occurs
+	 */	
+	public int executeUpdate(String query) throws SQLException {
+		Statement stmt;
+    	System.out.println("\nExecute the following query : " + query);
+		stmt = connection.createStatement();
+		int nbLineModified =  stmt.executeUpdate(query);
+    	System.out.println("Success !\n");
+
+    	return nbLineModified;
+	}
+
+	/**
+	 * Create a new computer in the BDD.
+	 * 
+	 * @param name String
+	 * @param introduced LocalDate
+	 * @param discontinued LocalDate
+	 * @param idCompany Long
+	 */
+	public void CreateNewComputer(String name, LocalDate introduced, LocalDate discontinued, Long idCompany) {
+    	try {
+    		String indices = "name";
+    		String values = "\"" + name + "\"";
+
+    		if (introduced != null) {
+    			indices += ", introduced";
+    			values  += ", \"" + introduced + "\"";
+    		}
+    		if (discontinued != null) {
+    			indices += ", discontinued";
+    			values += ", \"" + discontinued + "\"";
+    		}
+    		if (idCompany != null) {
+    			indices += ", company_id";
+    			values += ", \"" + idCompany + "\"";
+    		}
+
+	    	this.executeUpdate("INSERT INTO computer (" + indices + ") VALUES (" + values + ")");
+    	} catch (SQLException e) {
+ 			e.printStackTrace();
+ 		}
+	}
+
+	/**
+	 * Delete the given computer from the BDD
+	 * 
+	 * @param computer Computer
+	 */	
+	public void DeleteComputer(Computer computer) {
+    	try {
+	    	this.executeUpdate("DELETE FROM computer WHERE id=" + computer.getId() + ";");
+    	} catch (SQLException e) {
+ 			e.printStackTrace();
+ 		}
+	}
+
+	/**
 	 * Close the connection at the end
-	 */		
+	 */
 	@Override
 	public void finalize() {
     	try {

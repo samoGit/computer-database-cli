@@ -14,11 +14,30 @@ public class Computer {
 	private Date introduced;
 	private Date discontinued;
 	private Long company_id;
-	
+
 	// Constructors : 
+	/**
+	 * Default constructor (should not be used "manually").
+	 */
 	public Computer() {
 	}
+
+	/**
+	 * Constructor, only id and name are mandatory (introduced, discontinued and company_id can be null.
+	 * 
+	 * @param id Long
+	 * @param name String
+	 * @param introduced Date
+	 * @param discontinued Date
+	 * @param company_id Long
+	 */
 	public Computer(Long id, String name, Date introduced, Date discontinued, Long company_id) {
+		/* TODO : throw exception if :
+		 * 			- id == null
+		 * 			- name == null (?or == ""?)
+		 * 			- introduced is after discontinued
+		 * (??? same in setters ???)
+		 */
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
