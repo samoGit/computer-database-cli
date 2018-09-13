@@ -97,7 +97,7 @@ public class CommandLineInterface {
 	/**
      * Launch the menu which allows the user to select a computer (with its name) and displays all the information known about this computer
      */ 
-	private void launchMenuChooseComputer() {
+	private void launchMenuShowDetailComputer() {
 		System.out.println("\n\nPlease enter the name of a computer : ");
 		String name = scanner.nextLine();
 
@@ -143,6 +143,34 @@ public class CommandLineInterface {
 	}
 	
 	/**
+     * Ask the user to enter a number and return it
+     * 
+     * @param message String the text to be display until the user enter a number
+     * 
+     * @return a long value
+     */ 
+	private long getNumberFromUser(String message) {
+		long num = 0;
+		
+		boolean numIsOk = false;
+		while (!numIsOk) {
+			System.out.println(message);
+			
+			String strNum = scanner.nextLine();
+			try {
+				num = Integer.parseInt(strNum);
+				numIsOk = true;
+			}
+			catch (Exception e) {
+				System.out.println("Please enter a number.");
+			}
+		}
+
+		return num;
+	}
+	
+	
+	/**
      * Launch the menu which allows the user to create a new computer
      */ 
 	private void launchMenuCreateComputer() {
@@ -161,43 +189,92 @@ public class CommandLineInterface {
 	}
 	
 	/**
-     * Launch the menu which allows the user to delete a computer
-     */ 
-	private void launchMenuDeleteComputer() {
+     * Launch the menu which allows the user to choose a computer
+	 * 
+	 * @return {@link Computer}
+	 */
+	private Computer launchMenuChooseComputer() {
 		// Choose name 
-		System.out.println("\nEnter the name of the computer that you want to delete : ");
+		System.out.println("\nEnter the name of the computer : ");
 		String name = scanner.nextLine();
 		
-		Computer computerToBeDeleted = null;
+		Computer computer = null;
 		List<Computer> listComputersFound = computerService.getListComputersByName(name);
-		if (listComputersFound != null && listComputersFound.size() == 1) {
-			computerToBeDeleted = listComputersFound.get(0);			
+		
+		if (listComputersFound == null || listComputersFound.isEmpty()) {
+			System.out.println("No computer found with this name.");			
+		}
+		else if (listComputersFound.size() == 1) {
+			computer = listComputersFound.get(0);
 		}
 		else {
 			this.displayTableComputers(listComputersFound);
-			System.out.println("Multiple computer have the same name, please enter the id of the computer that need to be deleted : ");
+			System.out.println("Multiple computer have the same name, please enter the id of the computer : ");
 			String strID = scanner.nextLine();
 			
 			for (Computer c : listComputersFound) {
 				if (c.getId().toString().equals(strID)) {
-					computerToBeDeleted = c;
+					computer = c;
 					break;
 				}
 			}
 		}
 		
-		if (computerToBeDeleted == null)
-			System.out.println("No computer found with this name.");
-		else
+		return computer;
+	}
+	
+	/**
+     * Launch the menu which allows the user to delete a computer
+     */ 
+	private void launchMenuDeleteComputer() {
+		Computer computerToBeDeleted = this.launchMenuChooseComputer();
+		if (computerToBeDeleted != null)
 			computerService.DeleteComputer(computerToBeDeleted);
-		
 	}
 	
 	/**
      * Launch the menu which allows the user to update a computer
      */ 
 	private void launchMenuUpdateComputer() {
-		System.out.println("\n\n SOON TM \n\n");
+		Computer computerToBeUpdate = this.launchMenuChooseComputer();
+		if (computerToBeUpdate == null)
+			return ;
+
+		String field = "";
+		boolean fieldIsOK = false;
+		while (!fieldIsOK) {
+			System.out.println("What field do you want to update ('name', 'introduced', 'discontinued', 'company_id')");
+			field = scanner.nextLine();
+			
+			if (field.equals("id"))
+				System.out.println("You can not update this field.");
+			else if (field.equals("name")  || field.equals("introduced")  || field.equals("discontinued")  || field.equals("company_id"))
+				fieldIsOK = true;
+			else
+				System.out.println("This field do not exist.");
+		}
+		
+		if (field.equals("name")) {
+			System.out.println("Enter the new name : ");
+			String newName = scanner.nextLine();
+			computerToBeUpdate.setName(newName);
+		}
+		else if (field.equals("introduced")){
+			LocalDate dateIntroduced = this.getDate("Enter the new date : ");
+			computerToBeUpdate.setIntroduced(dateIntroduced);
+		}
+		else if (field.equals("introduced")){
+			LocalDate dateIntroduced = this.getDate("Enter the new date : ");
+			computerToBeUpdate.setIntroduced(dateIntroduced);
+		}
+		else if (field.equals("company_id")) {
+			this.displayAllCompanies();
+			long newCompanyId = this.getNumberFromUser("Enter the new company_id : ");// TODO: check that the companies exist
+			computerToBeUpdate.setCompany_id(newCompanyId);
+		}	
+		
+		if (computerToBeUpdate != null)
+			computerService.UpdateComputer(computerToBeUpdate, field);
 	}
 	
 	/**
@@ -220,7 +297,7 @@ public class CommandLineInterface {
 			System.out.println("\t0) Quit");
 			System.out.print("Please enter a number between 0 and 4 : ");
 
-			strChoice = scanner.nextLine();
+			strChoice = scanner.nextLine();// TODO : use getNumberFromUser
 			
 			// TODO :  use enum
 			if (strChoice.equals("1")) {
@@ -230,7 +307,7 @@ public class CommandLineInterface {
 				this.displayAllCompanies();
 			}
 			else if (strChoice.equals("3")) {
-				this.launchMenuChooseComputer();
+				this.launchMenuShowDetailComputer();
 			}
 			else if (strChoice.equals("4")) {
 				this.launchMenuCreateComputer();

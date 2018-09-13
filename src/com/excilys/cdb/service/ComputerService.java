@@ -60,4 +60,13 @@ public class ComputerService {
 	public void DeleteComputer(Computer c) {
 		daoJDBC.DeleteComputer(c);
 	}
+
+	/**
+	 * Delete the given computer from the BDD
+	 * 
+	 * @param c {@link Computer}
+	 */	
+	public void UpdateComputer(Computer c, String field) {
+		daoJDBC.UpdateComputer(c, field);
+	}
 }

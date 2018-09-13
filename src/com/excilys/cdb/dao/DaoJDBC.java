@@ -1,13 +1,14 @@
 package com.excilys.cdb.dao;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 
 import com.excilys.cdb.model.Company;
@@ -97,11 +98,13 @@ public class DaoJDBC {
 	    	ResultSet results = this.executeQuery("SELECT id, Name, introduced, discontinued, company_id FROM computer;");
 	    	while (results.next()) {
 	    		Long id = results.getLong("id");
-	    		String name = results.getString("Name");
-	    		Date introduced = results.getDate("introduced");;
-	    		Date discontinued = results.getDate("discontinued");
+	    		String name = results.getString("Name");	    		
+	    		Date dateIntroduced = results.getDate("introduced");;
+	    		LocalDate introduced = dateIntroduced != null ? dateIntroduced.toLocalDate() : null;
+	    		Date dateDiscontinued = results.getDate("discontinued");
+	    		LocalDate discontinued = dateDiscontinued != null ? dateDiscontinued.toLocalDate() : null;
 	    		Long company_id = results.getLong("company_id");
-	    		
+
 	    		Computer c = new Computer(id, name, introduced, discontinued, company_id);
 	    		listComputers.add(c);
 	    	}
@@ -126,10 +129,12 @@ public class DaoJDBC {
 	    	ResultSet results = this.executeQuery("SELECT id, introduced, discontinued, company_id FROM computer where name=\"" + name + "\";");
 	    	while (results.next()) {// TODO : check only one result !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	    		Long id = results.getLong("id");
-	    		Date introduced = results.getDate("introduced");;
-	    		Date discontinued = results.getDate("discontinued");
+	    		Date dateIntroduced = results.getDate("introduced");;
+	    		LocalDate introduced = dateIntroduced != null ? dateIntroduced.toLocalDate() : null;
+	    		Date dateDiscontinued = results.getDate("discontinued");
+	    		LocalDate discontinued = dateDiscontinued != null ? dateDiscontinued.toLocalDate() : null;
 	    		Long company_id = results.getLong("company_id");
-	    		
+
 	    		listComputersFound.add( new Computer(id, name, introduced, discontinued, company_id) );
 	    	}
     	} catch (SQLException e) {
@@ -215,6 +220,23 @@ public class DaoJDBC {
 	public void DeleteComputer(Computer computer) {
     	try {
 	    	this.executeUpdate("DELETE FROM computer WHERE id=" + computer.getId() + ";");
+    	} catch (SQLException e) {
+ 			e.printStackTrace();
+ 		}
+	}
+	
+	/**
+	 * Delete the given computer from the BDD
+	 * 
+	 * @param computer Computer
+	 */	
+	public void UpdateComputer(Computer computer, String field) {
+    	try {
+    		String valueWithQuoteIfNeeded = computer.getStringValue(field);
+    		if (valueWithQuoteIfNeeded != null) {
+    			valueWithQuoteIfNeeded = "\"" + valueWithQuoteIfNeeded + "\"";
+    		}
+	    	this.executeUpdate("UPDATE computer SET " + field + " = " + valueWithQuoteIfNeeded + "  WHERE id = " + computer.getId() + ";");
     	} catch (SQLException e) {
  			e.printStackTrace();
  		}

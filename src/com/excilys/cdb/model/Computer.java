@@ -1,6 +1,6 @@
 package com.excilys.cdb.model;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 /**
  * Contain data about a given computer.
@@ -11,8 +11,8 @@ public class Computer {
 	// Attributes : 
 	private Long id;
 	private String name;
-	private Date introduced;
-	private Date discontinued;
+	private LocalDate introduced;
+	private LocalDate discontinued;
 	private Long company_id;
 
 	// Constructors : 
@@ -27,11 +27,11 @@ public class Computer {
 	 * 
 	 * @param id Long
 	 * @param name String
-	 * @param introduced Date
-	 * @param discontinued Date
+	 * @param introduced LocalDate
+	 * @param discontinued LocalDate
 	 * @param company_id Long
 	 */
-	public Computer(Long id, String name, Date introduced, Date discontinued, Long company_id) {
+	public Computer(Long id, String name, LocalDate introduced, LocalDate discontinued, Long company_id) {
 		/* TODO : throw exception if :
 		 * 			- id == null
 		 * 			- name == null (?or == ""?)
@@ -58,16 +58,16 @@ public class Computer {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Date getIntroduced() {
+	public LocalDate getIntroduced() {
 		return introduced;
 	}
-	public void setIntroduced(Date introduced) {
+	public void setIntroduced(LocalDate introduced) {
 		this.introduced = introduced;
 	}
-	public Date getDiscontinued() {
+	public LocalDate getDiscontinued() {
 		return discontinued;
 	}
-	public void setDiscontinued(Date discontinued) {
+	public void setDiscontinued(LocalDate discontinued) {
 		this.discontinued = discontinued;
 	}
 	public Long getCompany_id() {
@@ -75,6 +75,21 @@ public class Computer {
 	}
 	public void setCompany_id(Long company_id) {
 		this.company_id = company_id;
+	}
+	public String getStringValue(String field) {
+		switch (field) {
+		case "id":
+			return id.toString();
+		case "name":
+			return name.toString();
+		case "introduced":
+			return introduced.toString();
+		case "discontinued":
+			return discontinued.toString();
+		case "company_id":
+			return company_id.toString();
+		}
+		return null;
 	}
 	
 	// Generated (hashCode, equals and toString) : 
