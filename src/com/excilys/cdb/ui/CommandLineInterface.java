@@ -10,6 +10,10 @@ import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
+
+// TODO : catch all exceptions in the UI (not before) + never return null object (use exception OR/AND optional object) + Create 3 class daoCompany, daoComputer, dao(abstract)
+
+
 /**
  * Display information in the terminal and manages interactions with the user.
  * 

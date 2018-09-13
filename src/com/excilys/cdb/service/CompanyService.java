@@ -1,9 +1,13 @@
 package com.excilys.cdb.service;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-import com.excilys.cdb.dao.DaoJDBC;
+import com.excilys.cdb.mapper.CompanyMapper;
 import com.excilys.cdb.model.Company;
+import com.excilys.cdb.persistence.DaoJDBC;
 
 /**
  * Manage company.
@@ -15,7 +19,11 @@ public class CompanyService {
 	private DaoJDBC daoJDBC;
 	
 	public CompanyService() {
-		daoJDBC = DaoJDBC.GetInstance();
+		try {
+			daoJDBC = DaoJDBC.GetInstance();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -24,6 +32,16 @@ public class CompanyService {
 	 * @return List of Company
 	 */	
 	public List<Company> getListCompanies() {
-		return daoJDBC.getListCompanies();
+		ArrayList<Company> listCompanies = new ArrayList<>();
+    	try {
+    		ResultSet resultSet = daoJDBC.getListCompanies();
+	    	while (resultSet.next()) {
+	    		listCompanies.add( CompanyMapper.getCompany(resultSet));
+	    	}
+    	} catch (SQLException e) {
+ 			e.printStackTrace();
+ 		}
+    	
+    	return listCompanies;
 	}	
 }
