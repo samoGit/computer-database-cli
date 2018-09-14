@@ -8,14 +8,14 @@ import java.time.LocalDate;
  * @author samy
  */
 public class Computer {
-	// Attributes : 
+	// Attributes :
 	private Long id;
 	private String name;
 	private LocalDate introduced;
 	private LocalDate discontinued;
 	private Long company_id;
 
-	// Constructors : 
+	// Constructors :
 	/**
 	 * Default constructor (should not be used "manually").
 	 */
@@ -23,20 +23,19 @@ public class Computer {
 	}
 
 	/**
-	 * Constructor, only id and name are mandatory (introduced, discontinued and company_id can be null.
+	 * Constructor, only id and name are mandatory (introduced, discontinued and
+	 * company_id can be null.
 	 * 
-	 * @param id Long
-	 * @param name String
-	 * @param introduced LocalDate
+	 * @param id           Long
+	 * @param name         String
+	 * @param introduced   LocalDate
 	 * @param discontinued LocalDate
-	 * @param company_id Long
+	 * @param company_id   Long
 	 */
 	public Computer(Long id, String name, LocalDate introduced, LocalDate discontinued, Long company_id) {
-		/* TODO : throw exception if :
-		 * 			- id == null
-		 * 			- name == null (?or == ""?)
-		 * 			- introduced is after discontinued
-		 * (??? same in setters ???)
+		/*
+		 * TODO : throw exception if : - id == null - name == null (?or == ""?) -
+		 * introduced is after discontinued (??? same in setters ???)
 		 */
 		this.id = id;
 		this.name = name;
@@ -44,38 +43,48 @@ public class Computer {
 		this.discontinued = discontinued;
 		this.company_id = company_id;
 	}
-	
-	// Getters and Setters : 	
+
+	// Getters and Setters :
 	public Long getId() {
 		return id;
 	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public LocalDate getIntroduced() {
 		return introduced;
 	}
+
 	public void setIntroduced(LocalDate introduced) {
 		this.introduced = introduced;
 	}
+
 	public LocalDate getDiscontinued() {
 		return discontinued;
 	}
+
 	public void setDiscontinued(LocalDate discontinued) {
 		this.discontinued = discontinued;
 	}
+
 	public Long getCompany_id() {
 		return company_id;
 	}
+
 	public void setCompany_id(Long company_id) {
 		this.company_id = company_id;
 	}
+
 	public String getStringValue(String field) {
 		switch (field) {
 		case "id":
@@ -91,8 +100,8 @@ public class Computer {
 		}
 		return null;
 	}
-	
-	// Generated (hashCode, equals and toString) : 
+
+	// Generated (hashCode, equals and toString) :
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -103,6 +112,7 @@ public class Computer {
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -134,6 +144,7 @@ public class Computer {
 			return false;
 		return true;
 	}
+
 	@Override
 	public String toString() {
 		return "Computer [getName()=" + getName() + ", getIntroduced()=" + getIntroduced() + ", getDiscontinued()="

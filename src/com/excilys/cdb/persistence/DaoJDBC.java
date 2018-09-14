@@ -6,7 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.excilys.cdb.mapper.CompanyMapper;
+import com.excilys.cdb.mapper.ComputerMapper;
+import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 
 /**
@@ -46,91 +51,97 @@ public class DaoJDBC {
 			instanceDaoJDBC = new DaoJDBC();
 		return instanceDaoJDBC;
 	}
-	
-	private Connection connection;
 
 	/**
 	 * Constructor call (only once) by GetInstance.
 	 * 
 	 * @throws ClassNotFoundException
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	private DaoJDBC() throws ClassNotFoundException, SQLException {
 		System.out.println("\nInit Driver...");
 		Class.forName(JDBC_DRIVER_CLASS_NAME);
-		System.out.println("Success !");
-		
-		System.out.println("\nGet connection...");
-		connection = DriverManager.getConnection(BDD_URL, BDD_USER, BDD_PASSWORD);
 		System.out.println("Success !");
 	}
 
 	/**
 	 * Return the list of companies present in the BDD
 	 * 
-	 * @return {@link ResultSet}
-	 * @throws SQLException .
+	 * @return List of {@link Company}
 	 */
-	public ResultSet getListCompanies() throws SQLException {
-		return this.executeQuery(SQL_SELECT_ALL_COMPANY);
+	public List<Company> getListCompanies() {
+		ArrayList<Company> listCompanies = new ArrayList<>();
+		try {
+			System.out.println("\nGet connection...");
+			Connection connection = DriverManager.getConnection(BDD_URL, BDD_USER, BDD_PASSWORD);
+			System.out.println("Success !");
+
+			Statement stmt;
+			stmt = connection.createStatement();
+			ResultSet resultSet = stmt.executeQuery(SQL_SELECT_ALL_COMPANY);
+			while (resultSet.next()) {
+				listCompanies.add(CompanyMapper.getCompany(resultSet));
+			}
+			
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return listCompanies;
 	}
 
 	/**
 	 * Return all the computers present in the BDD
 	 * 
-	 * @return The {@link ResultSet} of the query executed
-	 * @throws SQLException .
+	 * @return List of {@link Computer}
 	 */
-	public ResultSet getListComputers() throws SQLException {
-		return this.executeQuery(SQL_SELECT_ALL_COMPUTERS);
+	public List<Computer> getListComputers() {
+		ArrayList<Computer> listComputers = new ArrayList<>();
+		try {
+			System.out.println("\nGet connection...");
+			Connection connection = DriverManager.getConnection(BDD_URL, BDD_USER, BDD_PASSWORD);
+			System.out.println("Success !");
+
+			Statement stmt;
+			stmt = connection.createStatement();
+			ResultSet resultSet = stmt.executeQuery(SQL_SELECT_ALL_COMPUTERS);
+			while (resultSet.next()) {
+				listComputers.add(ComputerMapper.getComputer(resultSet));
+			}
+			
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return listComputers;
 	}
 
 	/**
 	 * Find every computers in the BDD with a given name
 	 * 
 	 * @param name String
-	 * @return The {@link ResultSet} of the query executed
-	 * @throws SQLException .
+	 * @return List of {@link Computer}
 	 */
-	public ResultSet getListComputersByName(String name) throws SQLException {
-		String query = String.format(SQL_SELECT_COMPUTERS_FROM_NAME, name);
-		return this.executeQuery(query);
-	}
+	public List<Computer> getListComputersByName(String name) {
+		ArrayList<Computer> listComputersFound = new ArrayList<>();
+		try {
+			System.out.println("\nGet connection...");
+			Connection connection = DriverManager.getConnection(BDD_URL, BDD_USER, BDD_PASSWORD);
+			System.out.println("Success !");
 
-	/**
-	 * Execute a SQL query to read data from BDD.
-	 * 
-	 * @param query String a valid SQL query.
-	 * @return The {@link ResultSet} of the query executed
-	 * @throws SQLException if a database access error occurs
-	 */
-	private ResultSet executeQuery(String query) throws SQLException {
-		Statement stmt;
-		System.out.println("\nExecute the following query : " + query);
-		stmt = connection.createStatement();
-		ResultSet result = stmt.executeQuery(query);
-		System.out.println("Success !\n");
-
-		return result;
-	}
-
-	/**
-	 * Execute a SQL query to update the BDD.
-	 * 
-	 * @param query String a valid SQL query.
-	 * 
-	 * @return either (1) the row count for SQL Data Manipulation Language (DML)
-	 *         statements or (2) 0 for SQL statements that return nothing
-	 * @throws SQLException if a database access error occurs
-	 */
-	public int executeUpdate(String query) throws SQLException {
-		Statement stmt;
-		System.out.println("\nExecute the following query : " + query);
-		stmt = connection.createStatement();
-		int nbLineModified = stmt.executeUpdate(query);
-		System.out.println("Success !\n");
-
-		return nbLineModified;
+			Statement stmt;
+			stmt = connection.createStatement();
+			String query = String.format(SQL_SELECT_COMPUTERS_FROM_NAME, name);
+			ResultSet resultSet = stmt.executeQuery(query);
+			while (resultSet.next()) {
+				listComputersFound.add(ComputerMapper.getComputer(resultSet));
+			}
+			
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return listComputersFound;
 	}
 
 	/**
@@ -140,10 +151,8 @@ public class DaoJDBC {
 	 * @param introduced   LocalDate
 	 * @param discontinued LocalDate
 	 * @param idCompany    Long
-	 * @throws SQLException .
 	 */
-	public void CreateNewComputer(String name, LocalDate introduced, LocalDate discontinued, Long idCompany)
-			throws SQLException {
+	public void CreateNewComputer(String name, LocalDate introduced, LocalDate discontinued, Long idCompany) {
 		String indices = "name";
 		String values = "\"" + name + "\"";
 
@@ -160,8 +169,19 @@ public class DaoJDBC {
 			values += ", \"" + idCompany + "\"";
 		}
 
-		String query = String.format(SQL_INSERT_COMPUTER, indices, values);
-		this.executeUpdate(query);
+		try {
+			System.out.println("\nGet connection...");
+			Connection connection = DriverManager.getConnection(BDD_URL, BDD_USER, BDD_PASSWORD);
+			System.out.println("Success !");
+
+			Statement stmt;
+			stmt = connection.createStatement();
+
+			String query = String.format(SQL_INSERT_COMPUTER, indices, values);
+			stmt.executeUpdate(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -170,36 +190,43 @@ public class DaoJDBC {
 	 * @param computer {@link Computer}
 	 * @throws SQLException .
 	 */
-	public void DeleteComputer(Computer computer) throws SQLException {
-		String query = String.format(SQL_DELETE_COMPUTER, computer.getId());
-		this.executeUpdate(query);
+	public void DeleteComputer(Computer computer) {
+		try {
+			System.out.println("\nGet connection...");
+			Connection connection = DriverManager.getConnection(BDD_URL, BDD_USER, BDD_PASSWORD);
+			System.out.println("Success !");
+
+			Statement stmt;
+			stmt = connection.createStatement();
+
+			String query = String.format(SQL_DELETE_COMPUTER, computer.getId());
+			stmt.executeUpdate(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * Delete the given computer from the BDD
 	 * 
 	 * @param computer {@link Computer}
-	 * @param field String field of the Table to be updated
-	 * @throws SQLException .
+	 * @param field    String field of the Table to be updated
 	 */
-	public void UpdateComputer(Computer computer, String field) throws SQLException {
+	public void UpdateComputer(Computer computer, String field) {
 		String valueWithQuoteIfNeeded = computer.getStringValue(field);
 		if (valueWithQuoteIfNeeded != null)
 			valueWithQuoteIfNeeded = "\"" + valueWithQuoteIfNeeded + "\"";
 
-		String query = String.format(SQL_UPDATE_COMPUTER, field, valueWithQuoteIfNeeded, computer.getId());
-		this.executeUpdate(query);
-	}
-	
-	/**
-	 * Close the connection at the end
-	 */
-	@Override
-	public void finalize() {
-    	try {
-        	System.out.println("\nClose connection...");
-			connection.close();
-	    	System.out.println("Success !");
+		try {
+			System.out.println("\nGet connection...");
+			Connection connection = DriverManager.getConnection(BDD_URL, BDD_USER, BDD_PASSWORD);
+			System.out.println("Success !");
+
+			Statement stmt;
+			stmt = connection.createStatement();
+
+			String query = String.format(SQL_UPDATE_COMPUTER, field, valueWithQuoteIfNeeded, computer.getId());
+			stmt.executeUpdate(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

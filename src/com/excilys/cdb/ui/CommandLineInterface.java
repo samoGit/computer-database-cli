@@ -11,9 +11,6 @@ import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
 
-// TODO : catch all exceptions in the UI (not before) + never return null object (use exception OR/AND optional object) + Create 3 class daoCompany, daoComputer, dao(abstract)
-
-
 /**
  * Display information in the terminal and manages interactions with the user.
  * 
@@ -60,7 +57,6 @@ public class CommandLineInterface {
      * Display info about all computers.
      */
 	private void displayAllComputers() {
-		// TODO : "The list of computers should also be pageable"
     	List<Computer> listComputers = computerService.getListComputers();
 		if (listComputers == null || listComputers.isEmpty()) {
 			System.out.println("No computers found.");
@@ -299,7 +295,7 @@ public class CommandLineInterface {
 			System.out.println("\t5) Update a computer");
 			System.out.println("\t6) Delete a computer");
 			System.out.println("\t0) Quit");
-			System.out.print("Please enter a number between 0 and 4 : ");
+			System.out.print("Please enter a number between 0 and 6 : ");
 
 			strChoice = scanner.nextLine();// TODO : use getNumberFromUser
 			
