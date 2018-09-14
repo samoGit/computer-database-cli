@@ -1,12 +1,11 @@
 package com.excilys.cdb.service;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.persistence.DaoJDBC;
+import com.excilys.cdb.persistence.ComputerDao;
 
 /**
  * Manage computer.
@@ -15,14 +14,10 @@ import com.excilys.cdb.persistence.DaoJDBC;
  */
 public class ComputerService {
 	
-	private DaoJDBC daoJDBC;
+	private ComputerDao daoJDBC;
 	
 	public ComputerService() {
-		try {
-			daoJDBC = DaoJDBC.GetInstance();
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
+		daoJDBC = ComputerDao.INSTANCE;
 	}
 
 	/**
