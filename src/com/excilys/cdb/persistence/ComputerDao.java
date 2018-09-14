@@ -22,12 +22,12 @@ public enum ComputerDao {
 	 */
 	INSTANCE;
 
-	final static String SQL_SELECT_ALL_COMPUTERS = "SELECT id, name, introduced, discontinued, company_id FROM computer;";
-	final static String SQL_SELECT_COMPUTERS_FROM_NAME = "SELECT id, name, introduced, discontinued, company_id FROM computer where name = \"%s\";";
+	private final static String SQL_SELECT_ALL_COMPUTERS = "SELECT id, name, introduced, discontinued, company_id FROM computer;";
+	private final static String SQL_SELECT_COMPUTERS_FROM_NAME = "SELECT id, name, introduced, discontinued, company_id FROM computer where name = \"%s\";";
 
-	final static String SQL_INSERT_COMPUTER = "INSERT INTO computer (%s) VALUES (%s);";
-	final static String SQL_DELETE_COMPUTER = "DELETE FROM computer WHERE id=\"%s\";";
-	final static String SQL_UPDATE_COMPUTER = "UPDATE computer SET %s = %s  WHERE id = %s;";
+	private final static String SQL_INSERT_COMPUTER = "INSERT INTO computer (%s) VALUES (%s);";
+	private final static String SQL_DELETE_COMPUTER = "DELETE FROM computer WHERE id=\"%s\";";
+	private final static String SQL_UPDATE_COMPUTER = "UPDATE computer SET %s = %s  WHERE id = %s;";
 
 	private final ConnectionManager connectionManager = ConnectionManager.INSTANCE;
 

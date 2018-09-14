@@ -8,14 +8,12 @@ import java.time.LocalDate;
  * @author samy
  */
 public class Computer {
-	// Attributes :
 	private Long id;
 	private String name;
 	private LocalDate introduced;
 	private LocalDate discontinued;
-	private Long company_id;
+	private Long companyId;
 
-	// Constructors :
 	/**
 	 * Default constructor (should not be used "manually").
 	 */
@@ -30,18 +28,14 @@ public class Computer {
 	 * @param name         String
 	 * @param introduced   LocalDate
 	 * @param discontinued LocalDate
-	 * @param company_id   Long
+	 * @param companyId    Long
 	 */
-	public Computer(Long id, String name, LocalDate introduced, LocalDate discontinued, Long company_id) {
-		/*
-		 * TODO : throw exception if : - id == null - name == null (?or == ""?) -
-		 * introduced is after discontinued (??? same in setters ???)
-		 */
+	public Computer(Long id, String name, LocalDate introduced, LocalDate discontinued, Long companyId) {
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
-		this.company_id = company_id;
+		this.companyId = companyId;
 	}
 
 	// Getters and Setters :
@@ -78,11 +72,11 @@ public class Computer {
 	}
 
 	public Long getCompany_id() {
-		return company_id;
+		return companyId;
 	}
 
-	public void setCompany_id(Long company_id) {
-		this.company_id = company_id;
+	public void setCompany_id(Long companyId) {
+		this.companyId = companyId;
 	}
 
 	public String getStringValue(String field) {
@@ -96,7 +90,7 @@ public class Computer {
 		case "discontinued":
 			return discontinued.toString();
 		case "company_id":
-			return company_id.toString();
+			return companyId.toString();
 		}
 		return null;
 	}
@@ -106,7 +100,7 @@ public class Computer {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((company_id == null) ? 0 : company_id.hashCode());
+		result = prime * result + ((companyId == null) ? 0 : companyId.hashCode());
 		result = prime * result + ((discontinued == null) ? 0 : discontinued.hashCode());
 		result = prime * result + ((introduced == null) ? 0 : introduced.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -122,10 +116,10 @@ public class Computer {
 		if (getClass() != obj.getClass())
 			return false;
 		Computer other = (Computer) obj;
-		if (company_id == null) {
-			if (other.company_id != null)
+		if (companyId == null) {
+			if (other.companyId != null)
 				return false;
-		} else if (!company_id.equals(other.company_id))
+		} else if (!companyId.equals(other.companyId))
 			return false;
 		if (discontinued == null) {
 			if (other.discontinued != null)
@@ -147,7 +141,7 @@ public class Computer {
 
 	@Override
 	public String toString() {
-		return "Computer [getName()=" + getName() + ", getIntroduced()=" + getIntroduced() + ", getDiscontinued()="
-				+ getDiscontinued() + ", getCompany_id()=" + getCompany_id() + "]";
+		return "Computer [id=" + id + ", name=" + name + ", introduced=" + introduced + ", discontinued=" + discontinued
+				+ ", companyId=" + companyId + "]";
 	}
 }

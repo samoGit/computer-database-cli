@@ -21,9 +21,9 @@ public enum CompanyDao {
 	 */
 	INSTANCE;
 
-	final static String SQL_SELECT_ALL_COMPANY = "SELECT id, name FROM company;";
+	private final static String SQL_SELECT_ALL_COMPANY = "SELECT id, name FROM company;";
 
-	private ConnectionManager connectionManager = ConnectionManager.INSTANCE;
+	private final ConnectionManager connectionManager = ConnectionManager.INSTANCE;
 
 	/**
 	 * Return the list of companies present in the BDD

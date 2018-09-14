@@ -36,7 +36,7 @@ public class ComputerMapper {
 		String name = resultSet.getString("name");
 
 		Date dateIntroduced = resultSet.getDate("introduced");
-		;
+		
 		LocalDate introduced = dateIntroduced != null ? dateIntroduced.toLocalDate() : null;
 		Date dateDiscontinued = resultSet.getDate("discontinued");
 		LocalDate discontinued = dateDiscontinued != null ? dateDiscontinued.toLocalDate() : null;

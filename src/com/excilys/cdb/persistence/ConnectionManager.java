@@ -12,9 +12,9 @@ public enum ConnectionManager {
 	INSTANCE;
 	
 	private final static String JDBC_DRIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
-	final static String BDD_URL = "jdbc:mysql://127.0.0.1:3306/computer-database-db";
-	final static String BDD_USER = "admincdb";
-	final static String BDD_PASSWORD = "qwerty1234";
+	private final static String BDD_URL = "jdbc:mysql://127.0.0.1:3306/computer-database-db";
+	private final static String BDD_USER = "admincdb";
+	private final static String BDD_PASSWORD = "qwerty1234";
 
 	/**
 	 * Load JDBC_DRIVER.

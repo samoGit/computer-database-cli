@@ -27,7 +27,7 @@ public class CommandLineInterface {
 	private Scanner scanner;
 
     /**
-     * Constructor, init daoJDBC .
+     * Constructor, init services.
      */
 	public CommandLineInterface() {
 		companyService = new CompanyService();
@@ -40,7 +40,6 @@ public class CommandLineInterface {
      */
 	private void displayAllCompanies() {
     	List<Company> listCompanies = companyService.getListCompanies();
-
     	System.out.println("\nList of companies : ");
 		System.out.println("/---------------------------------------------------------------\\");
 		System.out.println("|       id |                                               name |");
@@ -100,7 +99,6 @@ public class CommandLineInterface {
 	private void launchMenuShowDetailComputer() {
 		System.out.println("\n\nPlease enter the name of a computer : ");
 		String name = scanner.nextLine();
-
 		List<Computer> listComputersFound = computerService.getListComputersByName(name);
 		if (listComputersFound == null || listComputersFound.isEmpty()) {
 			System.out.println("The computer '" + name + "' is not found.");
@@ -112,22 +110,19 @@ public class CommandLineInterface {
 	
 	
 	/**
-     * Return a date with the format "d/MM/yyyy" (or null if the user enter "?")
+     * Return a date with the format "dd/MM/yyyy" (or null if the user enter "?")
      * 
      * @param message String the text to be display until the user enter a date with the expected format (or "?")
-     * 
      * @return a LocalDate object or null if the user enter "?"
      */ 
 	private LocalDate getDate(String message) {
 		LocalDate date = null;
-		
 		boolean dateFormatIsOk = false;
 		while (!dateFormatIsOk) {
 			System.out.println(message);
-			
 			String strDate = scanner.nextLine();
 			try {
-				date = LocalDate.parse(strDate, DateTimeFormatter.ofPattern("d/MM/yyyy"));
+				date = LocalDate.parse(strDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 				dateFormatIsOk = true;
 			}
 			catch (Exception e) {
@@ -138,20 +133,17 @@ public class CommandLineInterface {
 					dateFormatIsOk = true;					
 			}
 		}
-
 		return date;
 	}
-	
+
 	/**
      * Ask the user to enter a number and return it
      * 
      * @param message String the text to be display until the user enter a number
-     * 
      * @return a long value
      */ 
 	private long getNumberFromUser(String message) {
 		long num = 0;
-		
 		boolean numIsOk = false;
 		while (!numIsOk) {
 			System.out.println(message);
@@ -165,26 +157,18 @@ public class CommandLineInterface {
 				System.out.println("Please enter a number.");
 			}
 		}
-
 		return num;
 	}
-	
-	
+
 	/**
      * Launch the menu which allows the user to create a new computer
      */ 
 	private void launchMenuCreateComputer() {
-		// Choose name 
 		System.out.println("\nName : ");
 		String newComputerName = scanner.nextLine();
-
-		// Choose dates : 
 		LocalDate dateIntroduced = this.getDate("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when introduced : ");
 		LocalDate dateDiscontinued = this.getDate("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when discontinued : ");
-
-		// TODO : Choose company
 		Company companyNewComputer = null;
-
 		computerService.CreateNewComputer(newComputerName, dateIntroduced, dateDiscontinued, companyNewComputer);		
 	}
 	
@@ -194,7 +178,6 @@ public class CommandLineInterface {
 	 * @return {@link Computer}
 	 */
 	private Computer launchMenuChooseComputer() {
-		// Choose name 
 		System.out.println("\nEnter the name of the computer : ");
 		String name = scanner.nextLine();
 		
@@ -269,7 +252,7 @@ public class CommandLineInterface {
 		}
 		else if (field.equals("company_id")) {
 			this.displayAllCompanies();
-			long newCompanyId = this.getNumberFromUser("Enter the new company_id : ");// TODO: check that the companies exist
+			long newCompanyId = this.getNumberFromUser("Enter the new company_id : ");
 			computerToBeUpdate.setCompany_id(newCompanyId);
 		}	
 		
@@ -284,7 +267,6 @@ public class CommandLineInterface {
      *  - Display the list of Computers
      */ 
 	public void launchMainMenu() {
-
 		String strChoice;
 		do {
 			System.out.println("\n\nWhat do you want to do ?");
@@ -296,10 +278,8 @@ public class CommandLineInterface {
 			System.out.println("\t6) Delete a computer");
 			System.out.println("\t0) Quit");
 			System.out.print("Please enter a number between 0 and 6 : ");
-
-			strChoice = scanner.nextLine();// TODO : use getNumberFromUser
+			strChoice = scanner.nextLine();
 			
-			// TODO :  use enum
 			if (strChoice.equals("1")) {
 				this.displayAllComputers();
 			}

@@ -6,11 +6,9 @@ package com.excilys.cdb.model;
  * @author samy
  */
 public class Company {
-	// Attributes :
 	private Long id;
 	private String name;
 
-	// Constructors :
 	public Company() {
 	}
 
@@ -19,7 +17,6 @@ public class Company {
 		this.name = name;
 	}
 
-	// Getters / Setters :
 	public Long getId() {
 		return id;
 	}
@@ -36,7 +33,6 @@ public class Company {
 		this.name = name;
 	}
 
-	// Generated (hashCode, equals and toString) :
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -64,6 +60,6 @@ public class Company {
 
 	@Override
 	public String toString() {
-		return "Company [getId()=" + getId() + ", getName()=" + getName() + "]";
+		return "Company [id=" + id + ", name=" + name + "]";
 	}
 }
