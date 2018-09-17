@@ -38,7 +38,7 @@ public class CommandLineInterface {
     /**
      * Display info about all companies.
      */
-	private void displayAllCompanies() {
+	protected void displayAllCompanies() {
     	List<Company> listCompanies = companyService.getListCompanies();
     	System.out.println("\nList of companies : ");
 		System.out.println("/---------------------------------------------------------------\\");
@@ -55,7 +55,7 @@ public class CommandLineInterface {
 	/**
      * Display info about all computers.
      */
-	private void displayAllComputers() {
+	protected void displayAllComputers() {
     	List<Computer> listComputers = computerService.getListComputers();
 		if (listComputers == null || listComputers.isEmpty()) {
 			System.out.println("No computers found.");
@@ -96,7 +96,7 @@ public class CommandLineInterface {
 	/**
      * Launch the menu which allows the user to select a computer (with its name) and displays all the information known about this computer
      */ 
-	private void launchMenuShowDetailComputer() {
+	protected void launchMenuShowDetailComputer() {
 		System.out.println("\n\nPlease enter the name of a computer : ");
 		String name = scanner.nextLine();
 		List<Computer> listComputersFound = computerService.getListComputersByName(name);
@@ -163,7 +163,7 @@ public class CommandLineInterface {
 	/**
      * Launch the menu which allows the user to create a new computer
      */ 
-	private void launchMenuCreateComputer() {
+	protected void launchMenuCreateComputer() {
 		System.out.println("\nName : ");
 		String newComputerName = scanner.nextLine();
 		LocalDate dateIntroduced = this.getDate("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when introduced : ");
@@ -209,7 +209,7 @@ public class CommandLineInterface {
 	/**
      * Launch the menu which allows the user to delete a computer
      */ 
-	private void launchMenuDeleteComputer() {
+	protected void launchMenuDeleteComputer() {
 		Computer computerToBeDeleted = this.launchMenuChooseComputer();
 		if (computerToBeDeleted != null)
 			computerService.DeleteComputer(computerToBeDeleted);
@@ -218,7 +218,7 @@ public class CommandLineInterface {
 	/**
      * Launch the menu which allows the user to update a computer
      */ 
-	private void launchMenuUpdateComputer() {
+	protected void launchMenuUpdateComputer() {
 		Computer computerToBeUpdate = this.launchMenuChooseComputer();
 		if (computerToBeUpdate == null)
 			return ;

@@ -38,15 +38,14 @@ public enum ComputerDao {
 	 */
 	public List<Computer> getListComputers() {
 		ArrayList<Computer> listComputers = new ArrayList<>();
-		try {
-			Connection connection = connectionManager.getConnection();
+
+		try (Connection connection = connectionManager.getConnection()){
 			Statement stmt;
 			stmt = connection.createStatement();
 			ResultSet resultSet = stmt.executeQuery(SQL_SELECT_ALL_COMPUTERS);
 			while (resultSet.next()) {
 				listComputers.add(ComputerMapper.getComputer(resultSet));
 			}
-			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -61,8 +60,7 @@ public enum ComputerDao {
 	 */
 	public List<Computer> getListComputersByName(String name) {
 		ArrayList<Computer> listComputersFound = new ArrayList<>();
-		try {
-			Connection connection = connectionManager.getConnection();
+		try (Connection connection = connectionManager.getConnection()){
 			Statement stmt;
 			stmt = connection.createStatement();
 			String query = String.format(SQL_SELECT_COMPUTERS_FROM_NAME, name);
@@ -70,7 +68,6 @@ public enum ComputerDao {
 			while (resultSet.next()) {
 				listComputersFound.add(ComputerMapper.getComputer(resultSet));
 			}
-			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -102,13 +99,11 @@ public enum ComputerDao {
 			values += ", \"" + idCompany + "\"";
 		}
 
-		try {
-			Connection connection = connectionManager.getConnection();
+		try (Connection connection = connectionManager.getConnection()){
 			Statement stmt;
 			stmt = connection.createStatement();
 			String query = String.format(SQL_INSERT_COMPUTER, indices, values);
 			stmt.executeUpdate(query);
-			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -121,13 +116,11 @@ public enum ComputerDao {
 	 * @throws SQLException .
 	 */
 	public void DeleteComputer(Computer computer) {
-		try {
-			Connection connection = connectionManager.getConnection();
+		try (Connection connection = connectionManager.getConnection()){
 			Statement stmt;
 			stmt = connection.createStatement();
 			String query = String.format(SQL_DELETE_COMPUTER, computer.getId());
 			stmt.executeUpdate(query);
-			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -144,13 +137,11 @@ public enum ComputerDao {
 		if (valueWithQuoteIfNeeded != null)
 			valueWithQuoteIfNeeded = "\"" + valueWithQuoteIfNeeded + "\"";
 
-		try {
-			Connection connection = connectionManager.getConnection();
+		try (Connection connection = connectionManager.getConnection()){
 			Statement stmt;
 			stmt = connection.createStatement();
 			String query = String.format(SQL_UPDATE_COMPUTER, field, valueWithQuoteIfNeeded, computer.getId());
 			stmt.executeUpdate(query);
-			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

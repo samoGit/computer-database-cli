@@ -32,15 +32,13 @@ public enum CompanyDao {
 	 */
 	public List<Company> getListCompanies() {
 		ArrayList<Company> listCompanies = new ArrayList<>();
-		try {
-			Connection connection = connectionManager.getConnection();
+		try (Connection connection = connectionManager.getConnection()){
 			Statement stmt;
 			stmt = connection.createStatement();
 			ResultSet resultSet = stmt.executeQuery(SQL_SELECT_ALL_COMPANY);
 			while (resultSet.next()) {
 				listCompanies.add(CompanyMapper.getCompany(resultSet));
 			}
-			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

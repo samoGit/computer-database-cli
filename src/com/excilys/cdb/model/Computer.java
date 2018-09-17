@@ -38,7 +38,6 @@ public class Computer {
 		this.companyId = companyId;
 	}
 
-	// Getters and Setters :
 	public Long getId() {
 		return id;
 	}
@@ -95,7 +94,6 @@ public class Computer {
 		return null;
 	}
 
-	// Generated (hashCode, equals and toString) :
 	@Override
 	public int hashCode() {
 		final int prime = 31;
