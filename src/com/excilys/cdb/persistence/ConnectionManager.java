@@ -1,20 +1,40 @@
 package com.excilys.cdb.persistence;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
-public enum ConnectionManager {
-
-	/**
-	 * Instance of {@link ConnectionManager} (for Singleton pattern).
-	 */
-	INSTANCE;
+public class ConnectionManager {
 	
-	private final static String JDBC_DRIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
-	private final static String BDD_URL = "jdbc:mysql://127.0.0.1:3306/computer-database-db";
-	private final static String BDD_USER = "admincdb";
-	private final static String BDD_PASSWORD = "qwerty1234";
+	public final static ConnectionManager INSTANCE = new ConnectionManager();
+
+	private final String JDBC_DRIVER_CLASS_NAME;
+	private final String BDD_URL;
+	private final String BDD_USER;
+	private final String BDD_PASSWORD;	
+
+	public ConnectionManager() {
+		Properties properties = new Properties();
+		try {
+			InputStream input = new FileInputStream("config.properties");
+			properties.load(input);
+		} catch (FileNotFoundException e) {
+			System.err.println("The configuration file ('config.properties') is not found.");
+		}
+		catch (IOException e) {
+			System.err.println("Impossible to load the properties from the file 'config.properties'");
+		}
+		
+		JDBC_DRIVER_CLASS_NAME = properties.getProperty("JDBC_DRIVER_CLASS_NAME");
+		BDD_URL = properties.getProperty("BDD_URL");
+		BDD_USER = properties.getProperty("BDD_USER");
+		BDD_PASSWORD = properties.getProperty("BDD_PASSWORD");		
+	}
 
 	/**
 	 * Load JDBC_DRIVER.
