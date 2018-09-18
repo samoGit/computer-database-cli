@@ -34,19 +34,22 @@ public class ComputerMapper {
 	 *                      set
 	 */
 	public static Computer getComputer(ResultSet resultSet) throws SQLException {
-		Long id = resultSet.getLong("id");
-		String name = resultSet.getString("name");
+		Long id = resultSet.getLong("computer.id");
+		String name = resultSet.getString("computer.name");
 
-		Date dateIntroduced = resultSet.getDate("introduced");
+		Date dateIntroduced = resultSet.getDate("computer.introduced");
 		LocalDate localDateintroduced = dateIntroduced != null ? dateIntroduced.toLocalDate() : null;
 
-		Date dateDiscontinued = resultSet.getDate("discontinued");
+		Date dateDiscontinued = resultSet.getDate("computer.discontinued");
 		LocalDate localDateDiscontinued = dateDiscontinued != null ? dateDiscontinued.toLocalDate() : null;
 
-		Long company_id = resultSet.getLong("company_id");
-		Company company = null;
+		Long companyId = resultSet.getLong("company.id");
+		String companyName = resultSet.getString("company.name");
+		Optional<Company> company = Optional.empty();
+		if (companyId != null && companyName != null)
+			company = Optional.of(new Company(companyId, companyName));
 
-		return new Computer(id, name, Optional.ofNullable(localDateintroduced), Optional.ofNullable(localDateDiscontinued), Optional.ofNullable(company));
+		return new Computer(id, name, Optional.ofNullable(localDateintroduced), Optional.ofNullable(localDateDiscontinued), company);
 	}
 
 }

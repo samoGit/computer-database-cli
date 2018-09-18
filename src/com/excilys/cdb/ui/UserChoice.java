@@ -26,7 +26,7 @@ public enum UserChoice {
 	public Integer getValue() {
 		return value;
 	}
-	
+
 	public static Optional<UserChoice> fromString(String stringValue) {
 		for (UserChoice userChoice : UserChoice.values()) {
 			if (userChoice.value.toString().equals(stringValue))

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 
 /**
@@ -46,13 +47,13 @@ class TestComputerService {
 	@Test
 	void testGetListComputersByName() {
 		List<Computer> expectedComputerList = new ArrayList<Computer>();
-		Computer expectedComputer = new Computer(	Long.valueOf(571), 
-													"Lenovo Thinkpad Edge 11", 
-													Optional.ofNullable(null), 
-													Optional.ofNullable(null), 
-													Optional.ofNullable(null));
+		Computer expectedComputer = new Computer(	Long.valueOf(319), 
+													"HP Mini 1000", 
+													Optional.ofNullable(LocalDate.parse("29/10/2008", DateTimeFormatter.ofPattern("dd/MM/yyyy"))), 
+													Optional.empty(), 
+													Optional.ofNullable(new Company(Long.valueOf(27), "Hewlett-Packard")));
 		expectedComputerList.add(expectedComputer);
-		List<Computer> actualComputerList = computerService.getListComputersByName("Lenovo Thinkpad Edge 11");
+		List<Computer> actualComputerList = computerService.getListComputersByName("HP Mini 1000");
 		
 		assertEquals(expectedComputerList, actualComputerList);
 	}
