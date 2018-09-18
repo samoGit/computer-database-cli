@@ -26,15 +26,16 @@ public enum ComputerDao {
 
 	private final static String SQL_SELECT_ALL_COMPUTERS = "SELECT "
 			+ "computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
-			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id; ";
-
-	private
+			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
+			+ "ORDER BY computer.id LIMIT ?,?; ";
 
 	final static String SQL_SELECT_COMPUTERS_FROM_NAME = "SELECT "
 			+ "computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
 			+ "WHERE computer.name = ?; ";
-
+	
+	final static String SQL_SELECT_NB_COMPUTERS = "SELECT count(id) as nbComputers FROM computer;";
+	
 	private final static String SQL_INSERT_COMPUTER = "INSERT INTO computer ";
 	private final static String SQL_DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
 	private final static String SQL_UPDATE_COMPUTER = "UPDATE computer SET %s = %s  WHERE id = %s;";
@@ -46,11 +47,13 @@ public enum ComputerDao {
 	 * 
 	 * @return List of {@link Computer}
 	 */
-	public List<Computer> getListComputers() {
+	public List<Computer> getListComputers(Long offset, Long nbComputersByPage) {
 		ArrayList<Computer> listComputers = new ArrayList<>();
 
 		try (Connection connection = connectionManager.getConnection()) {
 			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_ALL_COMPUTERS);
+			stmt.setLong(1, offset);
+			stmt.setLong(2, nbComputersByPage);
 			ResultSet resultSet = stmt.executeQuery();
 			while (resultSet.next()) {
 				listComputers.add(ComputerMapper.getComputer(resultSet));
@@ -185,5 +188,25 @@ public enum ComputerDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Return the number of computer present in the BDD
+	 * 
+	 * @return Long
+	 */// 	final static String SQL_SELECT_NB_COMPUTERS = "SELECT count(id) as nbComputers FROM computer;";
+
+	public Long getNbComputers() {
+		Long nbComputer = null;
+		try (Connection connection = connectionManager.getConnection()) {
+			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_NB_COMPUTERS);
+			ResultSet resultSet = stmt.executeQuery();
+			if (resultSet != null)
+				resultSet.next();
+			nbComputer = resultSet.getLong("nbComputers");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return nbComputer;
 	}
 }

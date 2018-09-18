@@ -2,7 +2,7 @@ package com.excilys.cdb.ui;
 
 import java.util.Optional;
 
-public enum UserChoice {
+public enum UserChoiceMain {
 	DISPLAY_COMPUTERS(1, "Display the list of Computers"),
 	DISPLAY_COMPANIES(2, "Display the list of Companies"),
 	SHOW_COMPUTER_DETAILS(3, "Show computer details"),
@@ -14,7 +14,7 @@ public enum UserChoice {
 	private final Integer value;
 	private final String message;
 	
-	private UserChoice(Integer value, String message) {
+	private UserChoiceMain(Integer value, String message) {
 		this.value = value;
 		this.message = message;
 	}
@@ -27,10 +27,10 @@ public enum UserChoice {
 		return value;
 	}
 
-	public static Optional<UserChoice> fromString(String stringValue) {
-		for (UserChoice userChoice : UserChoice.values()) {
-			if (userChoice.value.toString().equals(stringValue))
-				return Optional.of(userChoice);
+	public static Optional<UserChoiceMain> fromString(String stringValue) {
+		for (UserChoiceMain userChoiceMain : UserChoiceMain.values()) {
+			if (userChoiceMain.value.toString().equals(stringValue))
+				return Optional.of(userChoiceMain);
 		}
 		return Optional.empty();
 	}

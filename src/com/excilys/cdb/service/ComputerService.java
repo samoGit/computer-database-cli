@@ -15,10 +15,12 @@ import com.excilys.cdb.persistence.ComputerDao;
  */
 public class ComputerService {
 	
-	private ComputerDao daoJDBC;
+	public static final Long NB_COMPUTERS_BY_PAGE=Long.valueOf(20);
+	
+	private ComputerDao computerDao;
 	
 	public ComputerService() {
-		daoJDBC = ComputerDao.INSTANCE;
+		computerDao = ComputerDao.INSTANCE;
 	}
 
 	/**
@@ -26,8 +28,8 @@ public class ComputerService {
 	 * 
 	 * @return List of {@link Computer}
 	 */	
-	public List<Computer> getListComputers() {
-		return daoJDBC.getListComputers();
+	public List<Computer> getListComputers(Long offset) {
+		return computerDao.getListComputers(offset, NB_COMPUTERS_BY_PAGE);
 	}
 
 	/**
@@ -37,7 +39,7 @@ public class ComputerService {
 	 * @return a list of {@link Computer} 
 	 */
 	public List<Computer> getListComputersByName(String name) {
-		return daoJDBC.getListComputersByName(name);
+		return computerDao.getListComputersByName(name);
 	}
 
 	/**
@@ -49,7 +51,7 @@ public class ComputerService {
 	 * @param company {@link Company}
 	 */
 	public void CreateNewComputer(String name, Optional<LocalDate> introduced, Optional<LocalDate> discontinued, Optional<Company> company) {
-		daoJDBC.CreateNewComputer(name, introduced, discontinued, company);
+		computerDao.CreateNewComputer(name, introduced, discontinued, company);
 	}
 
 	/**
@@ -58,7 +60,7 @@ public class ComputerService {
 	 * @param c {@link Computer}
 	 */	
 	public void DeleteComputer(Computer c) {
-		daoJDBC.DeleteComputer(c);
+		computerDao.DeleteComputer(c);
 	}
 
 	/**
@@ -68,6 +70,15 @@ public class ComputerService {
 	 * @param c {@link Computer}
 	 */	
 	public void UpdateComputer(Computer c, String field) {
-		daoJDBC.UpdateComputer(c, field);
+		computerDao.UpdateComputer(c, field);
+	}
+	
+	/**
+	 * Return the number of computer present in the BDD
+	 * 
+	 * @return Long
+	 */
+	public Long getNbComputers() {
+		return computerDao.getNbComputers();
 	}
 }

@@ -57,15 +57,58 @@ public class CommandLineInterface {
      * Display info about all computers.
      */
 	protected void displayAllComputers() {
-    	List<Computer> listComputers = computerService.getListComputers();
-		if (listComputers.isEmpty()) {
-			System.out.println("No computers found.");
-		}
-		else {
-			this.displayTableComputers(listComputers);
+		Long nbComputers = computerService.getNbComputers();
+
+		Long offset = nbComputers - ComputerService.NB_COMPUTERS_BY_PAGE;
+		boolean stop = false;
+		while (!stop) {
+	    	List<Computer> listComputers = computerService.getListComputers(offset);
+			if (listComputers.isEmpty()) {
+				System.out.println("No computers found.");
+			}
+			else {
+				this.displayTableComputers(listComputers);
+			}
+
+			System.out.println("\n\nWhat do you want to do ?");
+			Integer minValue = Integer.MAX_VALUE;
+			Integer maxValue = Integer.MIN_VALUE;
+			for (UserChoicePage userChoicePage : UserChoicePage.values()) {
+				if (minValue > userChoicePage.getValue()) {
+					minValue = userChoicePage.getValue();
+				}
+				if (maxValue < userChoicePage.getValue()) {
+					maxValue = userChoicePage.getValue();
+				}
+
+				System.out.println("\t" + userChoicePage.getValue() + ") " + userChoicePage.getMessage());				
+			}
+			System.out.print("Please enter a number between " + minValue + " and " + maxValue + " : ");
+			String strChoice = scanner.nextLine();
+
+			Optional<UserChoicePage> userChoice = UserChoicePage.fromString(strChoice);
+			if (userChoice.isPresent()) {
+				switch (userChoice.get()) {
+				case NEXT_PAGE:
+					offset += ComputerService.NB_COMPUTERS_BY_PAGE;
+					if (offset >= nbComputers) {
+						offset = Long.valueOf(0);
+					}
+					break;
+				case PREVIOUS_PAGE:
+					offset -= ComputerService.NB_COMPUTERS_BY_PAGE;
+					if (offset < 0) {
+						offset = nbComputers - ComputerService.NB_COMPUTERS_BY_PAGE;
+					}
+					break;
+				case BACK_TO_MENU:
+					stop = true;
+					break;
+				}
+			}
 		}
 	}
-	
+
 	/**
      * Display all the given computer in a table
      */
@@ -274,18 +317,18 @@ public class CommandLineInterface {
 			System.out.println("\n\nWhat do you want to do ?");
 			Integer minValue = Integer.MAX_VALUE;
 			Integer maxValue = Integer.MIN_VALUE;
-			for (UserChoice userChoice : UserChoice.values()) {
-				if (minValue > userChoice.getValue())
-					minValue = userChoice.getValue();
-				if (maxValue < userChoice.getValue())
-					maxValue = userChoice.getValue();
+			for (UserChoiceMain userChoiceMain : UserChoiceMain.values()) {
+				if (minValue > userChoiceMain.getValue())
+					minValue = userChoiceMain.getValue();
+				if (maxValue < userChoiceMain.getValue())
+					maxValue = userChoiceMain.getValue();
 
-				System.out.println("\t" + userChoice.getValue() + ") " + userChoice.getMessage());				
+				System.out.println("\t" + userChoiceMain.getValue() + ") " + userChoiceMain.getMessage());				
 			}
 			System.out.print("Please enter a number between " + minValue + " and " + maxValue + " : ");
 			String strChoice = scanner.nextLine();
 			
-			Optional<UserChoice> userChoice = UserChoice.fromString(strChoice);
+			Optional<UserChoiceMain> userChoice = UserChoiceMain.fromString(strChoice);
 			if (userChoice.isPresent()) {
 				switch (userChoice.get()) {
 				case DISPLAY_COMPUTERS:
@@ -311,6 +354,7 @@ public class CommandLineInterface {
 					break;
 				}
 			}
+		
 		}
 	}
 

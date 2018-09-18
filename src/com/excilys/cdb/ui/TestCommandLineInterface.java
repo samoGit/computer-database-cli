@@ -90,25 +90,51 @@ class TestCommandLineInterface {
 	void testDisplayAllComputers() {
 		ByteArrayOutputStream strDisplayedInSysout = new ByteArrayOutputStream();
 		System.setOut(new PrintStream(strDisplayedInSysout));	
+
+		ByteArrayInputStream in = new ByteArrayInputStream("3".getBytes());
+		System.setIn(in);
 		
 		CommandLineInterface cli = new CommandLineInterface();
 		cli.displayAllComputers();
 		
 		System.err.println(">>> testDisplayAllComputers >>>");
 		
-		String allStrDisplayed = strDisplayedInSysout.toString();
-		String last1000CharsDisplayed = allStrDisplayed.substring(allStrDisplayed.length() - 1000);
+		String strDisplayed = strDisplayedInSysout.toString();
 
-		System.err.println(last1000CharsDisplayed);
+		System.err.println(strDisplayed );
 		System.err.println("<<< testDisplayAllComputers <<<\n");
 
-		String expected = "         1975-01-01 |                                                  ? |\n" + 
+		String expected = "/--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\\n" + 
+				"|       id |                                                                   name |      date introduced |    date discontinued |                                            company |\n" + 
+				"|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|\n" + 
+				"|      559 |                                                                DECmate |                    ? |                    ? |                      Digital Equipment Corporation |\n" + 
+				"|      560 |                                                              DECsystem |                    ? |                    ? |                      Digital Equipment Corporation |\n" + 
+				"|      561 |                                                           NetApp Filer |                    ? |                    ? |                                                  ? |\n" + 
+				"|      562 |                                                               DEC GT40 |                    ? |                    ? |                      Digital Equipment Corporation |\n" + 
+				"|      563 |                                                                 ecoATM |                    ? |                    ? |                                                  ? |\n" + 
+				"|      564 |                                   MindWave BrainCubed Education Bundle |                    ? |                    ? |                                                  ? |\n" + 
+				"|      565 |                                                              PalmPilot |                    ? |                    ? |                                                  ? |\n" + 
+				"|      567 |                                    Dell Inspiron 560 Desktop Computer  |                    ? |                    ? |                                                  ? |\n" + 
+				"|      568 |                                                                 IPad 2 |                    ? |                    ? |                                         Apple Inc. |\n" + 
+				"|      569 |                                                            HP TouchPad |           2011-02-09 |                    ? |                                    Hewlett-Packard |\n" + 
+				"|      570 |                                                                HP Veer |           2011-02-09 |                    ? |                                    Hewlett-Packard |\n" + 
+				"|      571 |                                                Lenovo Thinkpad Edge 11 |                    ? |                    ? |                                       Lenovo Group |\n" + 
+				"|      572 |                                                            Dell Vostro |                    ? |                    ? |                                                  ? |\n" + 
+				"|      573 |                                                        Gateway LT3103U |           2008-01-01 |                    ? |                                                  ? |\n" + 
+				"|      580 |                                                                      1 |           1975-01-01 |           1975-01-01 |                                                  ? |\n" + 
 				"|      583 |                                                                      1 |           2001-01-01 |           2002-01-01 |                                                  ? |\n" + 
 				"|      588 |                                                                     44 |                    ? |                    ? |                                                  ? |\n" + 
 				"|      592 |                                                                      a |           2003-03-03 |           2004-04-04 |                                                  ? |\n" + 
 				"|      666 |                                                                    ZZe |           2003-02-01 |           2020-05-04 |                                  Texas Instruments |\n" + 
-				"\\--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------/\n";
-		assertEquals(last1000CharsDisplayed, expected);
+				"|      690 |                                                                     AA |                    ? |                    ? |                                                  ? |\n" + 
+				"\\--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------/\n" + 
+				"\n\n" + 
+				"What do you want to do ?\n" + 
+				"	1) Display the next page\n" + 
+				"	2) Display the previous page\n" + 
+				"	3) Go back to the main menu\n" + 
+				"Please enter a number between 1 and 3 : ";
+		assertEquals(strDisplayed, expected);
 	}
 
 	/**
