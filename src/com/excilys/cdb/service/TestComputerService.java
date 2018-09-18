@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -45,7 +46,11 @@ class TestComputerService {
 	@Test
 	void testGetListComputersByName() {
 		List<Computer> expectedComputerList = new ArrayList<Computer>();
-		Computer expectedComputer = new Computer(Long.valueOf(571), "Lenovo Thinkpad Edge 11", null, null, Long.valueOf(36));
+		Computer expectedComputer = new Computer(	Long.valueOf(571), 
+													"Lenovo Thinkpad Edge 11", 
+													Optional.ofNullable(null), 
+													Optional.ofNullable(null), 
+													Optional.ofNullable(null));
 		expectedComputerList.add(expectedComputer);
 		List<Computer> actualComputerList = computerService.getListComputersByName("Lenovo Thinkpad Edge 11");
 		
@@ -63,15 +68,15 @@ class TestComputerService {
 		String nameNewPC = "testCreateNewComputer";
 		LocalDate dateIntoducedNewPC = LocalDate.parse("01/02/2003", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 		LocalDate dateDiscontinuedNewPC = LocalDate.parse("04/05/2006", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-		computerService.CreateNewComputer(nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC,  null);		
+		computerService.CreateNewComputer(nameNewPC, Optional.ofNullable(dateIntoducedNewPC), Optional.ofNullable(dateDiscontinuedNewPC),  Optional.empty());
 
 		List<Computer> computerListFound = computerService.getListComputersByName("testCreateNewComputer");
 		assertFalse(computerListFound.isEmpty());
 
 		Computer computerFound = computerListFound.get(0);
 		assertEquals(computerFound.getName(), nameNewPC);
-		assertEquals(computerFound.getIntroduced(), dateIntoducedNewPC);
-		assertEquals(computerFound.getDiscontinued(), dateDiscontinuedNewPC);
+		assertEquals(computerFound.getDateIntroduced().get(), dateIntoducedNewPC);
+		assertEquals(computerFound.getDateDiscontinued().get(), dateDiscontinuedNewPC);
 		
 		computerService.DeleteComputer(computerFound);
 	}
@@ -84,7 +89,7 @@ class TestComputerService {
 		String nameNewPC = "testCreateNewComputer";
 		LocalDate dateIntoducedNewPC = LocalDate.parse("01/02/2003", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 		LocalDate dateDiscontinuedNewPC = LocalDate.parse("04/05/2006", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-		computerService.CreateNewComputer(nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC,  null);		
+		computerService.CreateNewComputer(nameNewPC, Optional.ofNullable(dateIntoducedNewPC), Optional.ofNullable(dateDiscontinuedNewPC),  Optional.empty());		
 
 		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName("testCreateNewComputer");
 		assertFalse(computerListShouldNotBeEmpty.isEmpty());
@@ -103,7 +108,7 @@ class TestComputerService {
 		String nameNewPC = "testCreateNewComputer";
 		LocalDate dateIntoducedNewPC = LocalDate.parse("01/02/2003", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 		LocalDate dateDiscontinuedNewPC = LocalDate.parse("04/05/2006", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-		computerService.CreateNewComputer(nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC,  null);
+		computerService.CreateNewComputer(nameNewPC, Optional.ofNullable(dateIntoducedNewPC), Optional.ofNullable(dateDiscontinuedNewPC),  Optional.empty());
 
 		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName("testCreateNewComputer");
 		assertFalse(computerListShouldNotBeEmpty.isEmpty());

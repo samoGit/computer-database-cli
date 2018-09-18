@@ -3,6 +3,7 @@ package com.excilys.cdb.ui;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 import com.excilys.cdb.model.Company;
@@ -57,7 +58,7 @@ public class CommandLineInterface {
      */
 	protected void displayAllComputers() {
     	List<Computer> listComputers = computerService.getListComputers();
-		if (listComputers == null || listComputers.isEmpty()) {
+		if (listComputers.isEmpty()) {
 			System.out.println("No computers found.");
 		}
 		else {
@@ -75,8 +76,8 @@ public class CommandLineInterface {
     	for (Computer c : listComputers) {
     		String strId = String.valueOf(c.getId());
     		String strName = String.valueOf(c.getName()); 
-    		String strIntroduced = String.valueOf( c.getIntroduced() == null ? "?" : c.getIntroduced() );
-    		String strDiscontinued = String.valueOf( c.getDiscontinued() == null ? "?" : c.getDiscontinued() );
+    		String strIntroduced = String.valueOf( c.getDateIntroduced().isPresent() ? c.getDateIntroduced().get() : "?" );
+    		String strDiscontinued = String.valueOf( c.getDateDiscontinued().isPresent() ? c.getDateDiscontinued().get() : "?");
 
     		this.displayRowComputer(strId, strName, strIntroduced, strDiscontinued);
     	}
@@ -100,7 +101,7 @@ public class CommandLineInterface {
 		System.out.println("\n\nPlease enter the name of a computer : ");
 		String name = scanner.nextLine();
 		List<Computer> listComputersFound = computerService.getListComputersByName(name);
-		if (listComputersFound == null || listComputersFound.isEmpty()) {
+		if (listComputersFound.isEmpty()) {
 			System.out.println("The computer '" + name + "' is not found.");
 		}
 		else {
@@ -110,20 +111,22 @@ public class CommandLineInterface {
 	
 	
 	/**
-     * Return a date with the format "dd/MM/yyyy" (or null if the user enter "?")
+     * Ask the user to enter a date with the format "dd/MM/yyyy" or "?"
      * 
-     * @param message String the text to be display until the user enter a date with the expected format (or "?")
-     * @return a LocalDate object or null if the user enter "?"
+     * @param message String The text to be display until the user enter a date with the expected format (or "?")
+     * @return A LocalDate object or Optional.empty() if the user enter "?"
      */ 
-	private LocalDate getDate(String message) {
-		LocalDate date = null;
+	private Optional<LocalDate> getDate(String message) {		
+		Optional<LocalDate> date = Optional.empty();
+
 		boolean dateFormatIsOk = false;
 		while (!dateFormatIsOk) {
 			System.out.println(message);
 			String strDate = scanner.nextLine();
 			try {
-				date = LocalDate.parse(strDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+				LocalDate localDate = LocalDate.parse(strDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 				dateFormatIsOk = true;
+				date = Optional.ofNullable(localDate);
 			}
 			catch (Exception e) {
 				if (!strDate.equals("?")) {
@@ -133,6 +136,7 @@ public class CommandLineInterface {
 					dateFormatIsOk = true;					
 			}
 		}
+		
 		return date;
 	}
 
@@ -166,10 +170,13 @@ public class CommandLineInterface {
 	protected void launchMenuCreateComputer() {
 		System.out.println("\nName : ");
 		String newComputerName = scanner.nextLine();
-		LocalDate dateIntroduced = this.getDate("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when introduced : ");
-		LocalDate dateDiscontinued = this.getDate("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when discontinued : ");
+	 	Optional<LocalDate> dateIntroduced = this.getDate("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when introduced : ");
+	 	Optional<LocalDate> dateDiscontinued = this.getDate("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when discontinued : ");
 		Company companyNewComputer = null;
-		computerService.CreateNewComputer(newComputerName, dateIntroduced, dateDiscontinued, companyNewComputer);		
+		computerService.CreateNewComputer(	newComputerName, 
+											dateIntroduced, 
+											dateDiscontinued, 
+											Optional.ofNullable(companyNewComputer));		
 	}
 	
 	/**
@@ -177,50 +184,48 @@ public class CommandLineInterface {
 	 * 
 	 * @return {@link Computer}
 	 */
-	private Computer launchMenuChooseComputer() {
+	private Optional<Computer> launchMenuChooseComputer() {
 		System.out.println("\nEnter the name of the computer : ");
 		String name = scanner.nextLine();
 		
-		Computer computer = null;
 		List<Computer> listComputersFound = computerService.getListComputersByName(name);
 		
-		if (listComputersFound == null || listComputersFound.isEmpty()) {
+		if (listComputersFound.isEmpty()) {
 			System.out.println("No computer found with this name.");			
 		}
 		else if (listComputersFound.size() == 1) {
-			computer = listComputersFound.get(0);
+			return Optional.ofNullable(listComputersFound.get(0));
 		}
 		else {
 			this.displayTableComputers(listComputersFound);
 			System.out.println("Multiple computer have the same name, please enter the id of the computer : ");
 			String strID = scanner.nextLine();
 			
-			for (Computer c : listComputersFound) {
-				if (c.getId().toString().equals(strID)) {
-					computer = c;
-					break;
+			for (Computer computer : listComputersFound) {
+				if (computer.getId().toString().equals(strID)) {
+					return Optional.ofNullable(computer);
 				}
 			}
 		}
 		
-		return computer;
+		return Optional.empty();
 	}
 	
 	/**
      * Launch the menu which allows the user to delete a computer
      */ 
 	protected void launchMenuDeleteComputer() {
-		Computer computerToBeDeleted = this.launchMenuChooseComputer();
-		if (computerToBeDeleted != null)
-			computerService.DeleteComputer(computerToBeDeleted);
+		Optional<Computer> computerToBeDeleted = this.launchMenuChooseComputer();
+		if (computerToBeDeleted.isPresent())
+			computerService.DeleteComputer(computerToBeDeleted.get());
 	}
 	
 	/**
      * Launch the menu which allows the user to update a computer
      */ 
 	protected void launchMenuUpdateComputer() {
-		Computer computerToBeUpdate = this.launchMenuChooseComputer();
-		if (computerToBeUpdate == null)
+		Optional<Computer> computerToBeUpdate = this.launchMenuChooseComputer();
+		if (!computerToBeUpdate.isPresent())
 			return ;
 
 		String field = "";
@@ -236,69 +241,77 @@ public class CommandLineInterface {
 			else
 				System.out.println("This field do not exist.");
 		}
-		
+
 		if (field.equals("name")) {
 			System.out.println("Enter the new name : ");
 			String newName = scanner.nextLine();
-			computerToBeUpdate.setName(newName);
+			computerToBeUpdate.get().setName(newName);
 		}
 		else if (field.equals("introduced")){
-			LocalDate dateIntroduced = this.getDate("Enter the new date : ");
-			computerToBeUpdate.setIntroduced(dateIntroduced);
+			Optional<LocalDate> dateIntroduced = this.getDate("Enter the new date : ");
+			computerToBeUpdate.get().setDateIntroduced(dateIntroduced);
 		}
-		else if (field.equals("introduced")){
-			LocalDate dateIntroduced = this.getDate("Enter the new date : ");
-			computerToBeUpdate.setIntroduced(dateIntroduced);
+		else if (field.equals("discontinued")){
+			Optional<LocalDate> dateDiscontinued = this.getDate("Enter the new date : ");
+			computerToBeUpdate.get().setDateDiscontinued(dateDiscontinued);
 		}
 		else if (field.equals("company_id")) {
 			this.displayAllCompanies();
 			long newCompanyId = this.getNumberFromUser("Enter the new company_id : ");
-			computerToBeUpdate.setCompany_id(newCompanyId);
-		}	
-		
-		if (computerToBeUpdate != null)
-			computerService.UpdateComputer(computerToBeUpdate, field);
+			Company company = null;
+			computerToBeUpdate.get().setCompany(Optional.ofNullable(company));
+		}
+
+		computerService.UpdateComputer(computerToBeUpdate.get(), field);
 	}
-	
+
 	/**
      * Launch the main menu.
-     * Allow the user to : 
-     *  - Display the list of Companies
-     *  - Display the list of Computers
-     */ 
+     */
 	public void launchMainMenu() {
-		String strChoice;
-		do {
+		boolean stop = false;
+		while (!stop) {
 			System.out.println("\n\nWhat do you want to do ?");
-			System.out.println("\t1) Display the list of Computers");
-			System.out.println("\t2) Display the list of Companies");
-			System.out.println("\t3) Show computer details");
-			System.out.println("\t4) Create a computer");
-			System.out.println("\t5) Update a computer");
-			System.out.println("\t6) Delete a computer");
-			System.out.println("\t0) Quit");
-			System.out.print("Please enter a number between 0 and 6 : ");
-			strChoice = scanner.nextLine();
+			Integer minValue = Integer.MAX_VALUE;
+			Integer maxValue = Integer.MIN_VALUE;
+			for (UserChoice userChoice : UserChoice.values()) {
+				if (minValue > userChoice.getValue())
+					minValue = userChoice.getValue();
+				if (maxValue < userChoice.getValue())
+					maxValue = userChoice.getValue();
+
+				System.out.println("\t" + userChoice.getValue() + ") " + userChoice.getMessage());				
+			}
+			System.out.print("Please enter a number between " + minValue + " and " + maxValue + " : ");
+			String strChoice = scanner.nextLine();
 			
-			if (strChoice.equals("1")) {
-				this.displayAllComputers();
+			Optional<UserChoice> userChoice = UserChoice.fromString(strChoice);
+			if (userChoice.isPresent()) {
+				switch (userChoice.get()) {
+				case DISPLAY_COMPUTERS:
+					this.displayAllComputers();
+					break;
+				case DISPLAY_COMPANIES:
+					this.displayAllCompanies();
+					break;
+				case SHOW_COMPUTER_DETAILS:
+					this.launchMenuShowDetailComputer();
+					break;
+				case CREATE_COMPUTER:
+					this.launchMenuCreateComputer();
+					break;
+				case UPDATE_COMPUTER:
+					this.launchMenuUpdateComputer();
+					break;
+				case DELETE_COMPUTER:
+					this.launchMenuDeleteComputer();
+					break;
+				case QUIT:
+					stop = true;
+					break;
+				}
 			}
-			else if (strChoice.equals("2")) {
-				this.displayAllCompanies();
-			}
-			else if (strChoice.equals("3")) {
-				this.launchMenuShowDetailComputer();
-			}
-			else if (strChoice.equals("4")) {
-				this.launchMenuCreateComputer();
-			}
-			else if (strChoice.equals("5")) {
-				this.launchMenuUpdateComputer();
-			}
-			else if (strChoice.equals("6")) {
-				this.launchMenuDeleteComputer();
-			}
-		} while (!strChoice.equals("0"));
+		}
 	}
 
 	/**
@@ -307,11 +320,9 @@ public class CommandLineInterface {
      * @param args String[] not used
      */
 	public static void main(String[] args) {
-    	System.out.println("\nHELLO");
-    	
+		System.out.println("Hello !");
     	CommandLineInterface CLI = new CommandLineInterface();
     	CLI.launchMainMenu();
-
-    	System.out.println("\nGOODBYE");
+		System.out.println("Goodbye !");
 	}
 }

@@ -1,9 +1,9 @@
 package com.excilys.cdb.persistence;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,10 +32,9 @@ public enum CompanyDao {
 	 */
 	public List<Company> getListCompanies() {
 		ArrayList<Company> listCompanies = new ArrayList<>();
-		try (Connection connection = connectionManager.getConnection()){
-			Statement stmt;
-			stmt = connection.createStatement();
-			ResultSet resultSet = stmt.executeQuery(SQL_SELECT_ALL_COMPANY);
+		try (Connection connection = connectionManager.getConnection()) {
+			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_ALL_COMPANY); 
+			ResultSet resultSet = stmt.executeQuery();
 			while (resultSet.next()) {
 				listCompanies.add(CompanyMapper.getCompany(resultSet));
 			}
@@ -44,4 +43,5 @@ public enum CompanyDao {
 		}
 		return listCompanies;
 	}
+
 }

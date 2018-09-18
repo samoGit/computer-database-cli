@@ -1,14 +1,16 @@
 package com.excilys.cdb.persistence;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.excilys.cdb.mapper.ComputerMapper;
+import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 
 /**
@@ -23,10 +25,10 @@ public enum ComputerDao {
 	INSTANCE;
 
 	private final static String SQL_SELECT_ALL_COMPUTERS = "SELECT id, name, introduced, discontinued, company_id FROM computer;";
-	private final static String SQL_SELECT_COMPUTERS_FROM_NAME = "SELECT id, name, introduced, discontinued, company_id FROM computer where name = \"%s\";";
+	private final static String SQL_SELECT_COMPUTERS_FROM_NAME = "SELECT id, name, introduced, discontinued, company_id FROM computer where name = ?;";
 
-	private final static String SQL_INSERT_COMPUTER = "INSERT INTO computer (%s) VALUES (%s);";
-	private final static String SQL_DELETE_COMPUTER = "DELETE FROM computer WHERE id=\"%s\";";
+	private final static String SQL_INSERT_COMPUTER = "INSERT INTO computer ";
+	private final static String SQL_DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
 	private final static String SQL_UPDATE_COMPUTER = "UPDATE computer SET %s = %s  WHERE id = %s;";
 
 	private final ConnectionManager connectionManager = ConnectionManager.INSTANCE;
@@ -40,9 +42,8 @@ public enum ComputerDao {
 		ArrayList<Computer> listComputers = new ArrayList<>();
 
 		try (Connection connection = connectionManager.getConnection()){
-			Statement stmt;
-			stmt = connection.createStatement();
-			ResultSet resultSet = stmt.executeQuery(SQL_SELECT_ALL_COMPUTERS);
+			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_ALL_COMPUTERS); 
+			ResultSet resultSet = stmt.executeQuery();
 			while (resultSet.next()) {
 				listComputers.add(ComputerMapper.getComputer(resultSet));
 			}
@@ -61,10 +62,9 @@ public enum ComputerDao {
 	public List<Computer> getListComputersByName(String name) {
 		ArrayList<Computer> listComputersFound = new ArrayList<>();
 		try (Connection connection = connectionManager.getConnection()){
-			Statement stmt;
-			stmt = connection.createStatement();
-			String query = String.format(SQL_SELECT_COMPUTERS_FROM_NAME, name);
-			ResultSet resultSet = stmt.executeQuery(query);
+			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_COMPUTERS_FROM_NAME); 
+			stmt.setString(1, name);
+			ResultSet resultSet = stmt.executeQuery();
 			while (resultSet.next()) {
 				listComputersFound.add(ComputerMapper.getComputer(resultSet));
 			}
@@ -82,28 +82,38 @@ public enum ComputerDao {
 	 * @param discontinued LocalDate
 	 * @param idCompany    Long
 	 */
-	public void CreateNewComputer(String name, LocalDate introduced, LocalDate discontinued, Long idCompany) {
+	public void CreateNewComputer(String name, Optional<LocalDate> introduced, Optional<LocalDate> discontinued, Optional<Company> company) {
+		String query = SQL_INSERT_COMPUTER; //(?) VALUES (?);
+		
 		String indices = "name";
-		String values = "\"" + name + "\"";
-
-		if (introduced != null) {
+		String values = "?";
+		if (introduced.isPresent()) {
 			indices += ", introduced";
-			values += ", \"" + introduced + "\"";
+			values += ", ?";
 		}
-		if (discontinued != null) {
+		if (discontinued.isPresent()) {
 			indices += ", discontinued";
-			values += ", \"" + discontinued + "\"";
+			values += ", ?";
 		}
-		if (idCompany != null) {
+		if (company.isPresent()) {
 			indices += ", company_id";
-			values += ", \"" + idCompany + "\"";
+			values += ", ?";
 		}
-
+		query += " (" + indices + ") VALUES (" + values + ");";
+				
 		try (Connection connection = connectionManager.getConnection()){
-			Statement stmt;
-			stmt = connection.createStatement();
-			String query = String.format(SQL_INSERT_COMPUTER, indices, values);
-			stmt.executeUpdate(query);
+			PreparedStatement stmt = connection.prepareStatement(query);
+			
+			int num=1;
+			stmt.setString(num++, name);
+			if (introduced.isPresent())
+				stmt.setString(num++, introduced.get().toString());
+			if (discontinued.isPresent())
+				stmt.setString(num++, discontinued.get().toString());
+			if (company.isPresent())
+				stmt.setLong(num++, company.get().getId());
+			
+			stmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -116,11 +126,10 @@ public enum ComputerDao {
 	 * @throws SQLException .
 	 */
 	public void DeleteComputer(Computer computer) {
-		try (Connection connection = connectionManager.getConnection()){
-			Statement stmt;
-			stmt = connection.createStatement();
-			String query = String.format(SQL_DELETE_COMPUTER, computer.getId());
-			stmt.executeUpdate(query);
+		try (Connection connection = connectionManager.getConnection()){			
+			PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_COMPUTER); 
+			stmt.setLong(1, computer.getId());
+			stmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -133,15 +142,37 @@ public enum ComputerDao {
 	 * @param field    String field of the Table to be updated
 	 */
 	public void UpdateComputer(Computer computer, String field) {
-		String valueWithQuoteIfNeeded = computer.getStringValue(field);
-		if (valueWithQuoteIfNeeded != null)
+		String valueWithQuoteIfNeeded = "null";
+		switch (field) {
+			case "id":
+				valueWithQuoteIfNeeded = computer.getId().toString();
+				break;
+			case "name":
+				valueWithQuoteIfNeeded = computer.getName().toString();
+				break;
+			case "introduced":
+				if (computer.getDateIntroduced().isPresent())
+					valueWithQuoteIfNeeded = computer.getDateIntroduced().get().toString();
+				break;
+			case "discontinued":
+				if (computer.getDateDiscontinued().isPresent())
+					valueWithQuoteIfNeeded = computer.getDateDiscontinued().get().toString();
+				break;
+			case "company_id":
+				if (computer.getCompany().isPresent())
+					valueWithQuoteIfNeeded = computer.getCompany().get().getId().toString();
+				break;			
+		}
+
+		// in SQL null value must NOT be surrounded with quotes 
+		if (!valueWithQuoteIfNeeded.equals("null"))
 			valueWithQuoteIfNeeded = "\"" + valueWithQuoteIfNeeded + "\"";
 
 		try (Connection connection = connectionManager.getConnection()){
-			Statement stmt;
-			stmt = connection.createStatement();
 			String query = String.format(SQL_UPDATE_COMPUTER, field, valueWithQuoteIfNeeded, computer.getId());
-			stmt.executeUpdate(query);
+			PreparedStatement stmt;
+			stmt = connection.prepareStatement(query);
+			stmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -2,6 +2,7 @@ package com.excilys.cdb.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
@@ -47,8 +48,8 @@ public class ComputerService {
 	 * @param discontinued LocalDate
 	 * @param company {@link Company}
 	 */
-	public void CreateNewComputer(String name, LocalDate introduced, LocalDate discontinued, Company company) {
-		daoJDBC.CreateNewComputer(name, introduced, discontinued, company == null ? null : company.getId());
+	public void CreateNewComputer(String name, Optional<LocalDate> introduced, Optional<LocalDate> discontinued, Optional<Company> company) {
+		daoJDBC.CreateNewComputer(name, introduced, discontinued, company);
 	}
 
 	/**

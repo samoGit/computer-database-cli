@@ -160,7 +160,9 @@ class TestCommandLineInterface {
 		System.err.println(strDisplayedInSysout.toString());
 		System.err.println("<<< testLaunchMainMenuAndCloseIt <<<\n");
 
-		String expected = "\n" + 
+		String expected = "Load config.properties file.\n" + 
+				"Init Driver.\n" + 
+				"\n" + 
 				"\n" + 
 				"What do you want to do ?\n" + 
 				"	1) Display the list of Computers\n" + 

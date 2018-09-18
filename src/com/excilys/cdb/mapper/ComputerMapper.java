@@ -4,7 +4,9 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Optional;
 
+import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 
 /**
@@ -36,14 +38,15 @@ public class ComputerMapper {
 		String name = resultSet.getString("name");
 
 		Date dateIntroduced = resultSet.getDate("introduced");
-		
-		LocalDate introduced = dateIntroduced != null ? dateIntroduced.toLocalDate() : null;
+		LocalDate localDateintroduced = dateIntroduced != null ? dateIntroduced.toLocalDate() : null;
+
 		Date dateDiscontinued = resultSet.getDate("discontinued");
-		LocalDate discontinued = dateDiscontinued != null ? dateDiscontinued.toLocalDate() : null;
+		LocalDate localDateDiscontinued = dateDiscontinued != null ? dateDiscontinued.toLocalDate() : null;
 
 		Long company_id = resultSet.getLong("company_id");
+		Company company = null;
 
-		return new Computer(id, name, introduced, discontinued, company_id);
+		return new Computer(id, name, Optional.ofNullable(localDateintroduced), Optional.ofNullable(localDateDiscontinued), Optional.ofNullable(company));
 	}
 
 }
